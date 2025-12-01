@@ -14,6 +14,8 @@ interface Props {
  */
 export function MessageBubble({ message }: Props) {
   const isUser = message.role === 'user';
+  
+  console.log('MessageBubble render:', { role: message.role, content: message.content, isUser });
 
   return (
     <motion.div
@@ -28,7 +30,7 @@ export function MessageBubble({ message }: Props) {
         className={cn(
           'max-w-[85%] px-4 py-3 rounded-lg',
           isUser
-            ? 'bg-blue-500 text-white rounded-br-none'
+            ? 'bg-[#5B8DC8] text-white rounded-br-none'
             : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
         )}
       >
@@ -36,7 +38,7 @@ export function MessageBubble({ message }: Props) {
         <time
           className={cn(
             'text-xs mt-2 block',
-            isUser ? 'text-white/70' : 'text-gray-500'
+            isUser ? 'text-white/80' : 'text-gray-500'
           )}
           dateTime={new Date(message.timestamp).toISOString()}
         >

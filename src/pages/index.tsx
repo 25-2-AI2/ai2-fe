@@ -62,7 +62,7 @@ export default function HomePage() {
   return (
     <div className="h-screen flex overflow-hidden bg-[#F3F4F6]">
       {/* 데스크탑: 좌측 챗봇 */}
-      <aside className="w-[380px] shrink-0 hidden md:block border-r border-[#E5E7EB]">
+      <aside className="w-[380px] h-screen shrink-0 hidden md:block border-r border-[#E5E7EB]">
         <ChatRoom />
       </aside>
 
@@ -70,7 +70,7 @@ export default function HomePage() {
       {isMobileChatOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setIsMobileChatOpen(false)} />
-          <div className="absolute inset-y-0 left-0 w-full max-w-sm bg-white shadow-xl">
+          <div className="absolute inset-y-0 left-0 w-full max-w-sm bg-white shadow-xl h-screen">
             <ChatRoom />
           </div>
         </div>

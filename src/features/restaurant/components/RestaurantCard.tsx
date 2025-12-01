@@ -3,11 +3,18 @@ import { useChatStore } from '@/shared/store/chatStore';
 import { useRouter } from 'next/router';
 import { cn } from '@/shared/lib/cn';
 import Image from 'next/image';
+import { ASPECT_LABELS, UI_CONSTANTS } from '@/shared/constants/ui';
 
 interface Props {
   restaurant: Restaurant;
 }
 
+/**
+ * 레스토랑 카드 컴포넌트
+ * - 호버 시 지도 마커 하이라이트
+ * - 접근성 개선 (키보드 네비게이션)
+ * - 상수로 매직 넘버 제거
+ */
 export function RestaurantCard({ restaurant }: Props) {
   const { selectedRestaurantId, setSelectedRestaurant } = useChatStore();
   const router = useRouter();
@@ -17,24 +24,35 @@ export function RestaurantCard({ restaurant }: Props) {
     router.push(`/restaurant/${restaurant.id}`);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       onMouseEnter={() => setSelectedRestaurant(restaurant.id)}
+      aria-label={`${restaurant.name} 상세 정보 보기`}
       className={cn(
-        'w-[280px] bg-white rounded-lg border transition-all cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-[#5B8DC8]',
-        isSelected ? 'border-[#5B8DC8] shadow-md ring-2 ring-[#D9EAFD]' : 'border-[#E5E7EB]'
+        'w-[280px] bg-white rounded-lg border border-gray-200 transition-all hover:shadow-lg hover:scale-[1.02] hover:border-blue-500',
+        isSelected && 'border-blue-500 shadow-md ring-2 ring-blue-100'
       )}
     >
       {/* 이미지 */}
-      <div className="relative h-[160px] w-full bg-[#F9FAFB] rounded-t-lg overflow-hidden">
+      <div className="relative h-[160px] w-full bg-gray-50 rounded-t-lg overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-16 h-16 text-[#BCCCDC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
         {isSelected && (
-          <div className="absolute top-2 right-2 w-2 h-2 bg-[#5B8DC8] rounded-full shadow-lg" />
+          <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full shadow-lg" />
         )}
       </div>
 
@@ -47,7 +65,7 @@ export function RestaurantCard({ restaurant }: Props) {
         </div>
 
         <div className="flex items-center gap-2 mb-2">
-          <span className="px-2 py-0.5 bg-[#F9FAFB] text-gray-700 text-xs rounded border border-[#E5E7EB]">
+          <span className="px-2 py-0.5 bg-gray-50 text-gray-700 text-xs rounded border border-gray-200">
             {restaurant.category}
           </span>
           <div className="flex items-center gap-0.5">
@@ -58,23 +76,23 @@ export function RestaurantCard({ restaurant }: Props) {
           </div>
         </div>
 
-        <p className="text-xs text-[#9AA6B2] mb-2.5 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-gray-500 mb-2.5 line-clamp-2 leading-relaxed">
           {restaurant.summary}
         </p>
 
-        {/* Aspect 점수 (간단 버전) */}
+        {/* Aspect 점수 */}
         <div className="space-y-1.5">
           {Object.entries(restaurant.scores)
             .filter(([key]) => key !== 'overall')
-            .slice(0, 2)
+            .slice(0, UI_CONSTANTS.MAX_PREVIEW_ASPECTS)
             .map(([key, value]) => (
               <div key={key} className="flex items-center gap-2">
-                <span className="text-xs text-[#9AA6B2] w-11">
+                <span className="text-xs text-gray-500 w-11">
                   {ASPECT_LABELS[key as keyof typeof ASPECT_LABELS]}
                 </span>
-                <div className="flex-1 bg-[#F3F4F6] rounded-full h-1">
+                <div className="flex-1 bg-gray-100 rounded-full h-1">
                   <div
-                    className="bg-[#5B8DC8] h-1 rounded-full transition-all"
+                    className="bg-blue-500 h-1 rounded-full transition-all"
                     style={{ width: `${(value / 5) * 100}%` }}
                   />
                 </div>
@@ -88,10 +106,3 @@ export function RestaurantCard({ restaurant }: Props) {
     </div>
   );
 }
-
-const ASPECT_LABELS = {
-  taste: '맛',
-  price: '가성비',
-  atmosphere: '분위기',
-  hygiene: '위생',
-};

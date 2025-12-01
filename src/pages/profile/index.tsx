@@ -1,26 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useProfileStore } from '@/shared/store/profileStore';
 import { PreferenceSlider } from '@/features/profile/components/PreferenceSlider';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 const ASPECTS = [
-  { key: 'taste', label: '맛' },
+  { key: 'food', label: '맛' },
+  { key: 'service', label: '서비스' },
+  { key: 'ambience', label: '분위기' },
   { key: 'price', label: '가성비' },
-  { key: 'atmosphere', label: '분위기' },
   { key: 'hygiene', label: '위생' },
+  { key: 'waiting', label: '대기시간' },
+  { key: 'accessibility', label: '접근성' },
 ] as const;
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { profile, updateProfile, setProfileCompleted } = useProfileStore();
+  const { profile, updateProfile, setProfileCompleted, saveUserPreferences, fetchUserProfile, isLoading, error } = useProfileStore();
   const [preferences, setPreferences] = useState(profile.aspects);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const handleSave = () => {
+  // TODO: 실제 사용자 ID는 인증 시스템에서 가져와야 합니다
+  const CURRENT_USER_ID = 1; // 임시 하드코딩
+
+  // 페이지 진입 시 서버에서 유저 데이터 불러오기
+  useEffect(() => {
+    fetchUserProfile(CURRENT_USER_ID);
+  }, [fetchUserProfile]);
+
+  // 프로필이 로드되면 로컬 상태 업데이트
+  useEffect(() => {
+    setPreferences(profile.aspects);
+  }, [profile.aspects]);
+
+  const handleSave = async () => {
+    setSaveError(null);
+    
+    // 로컬 상태 먼저 업데이트
     updateProfile(preferences);
     setProfileCompleted();
-    router.push('/');
+
+    try {
+      // API 호출하여 서버에 저장
+      await saveUserPreferences(CURRENT_USER_ID);
+      router.push('/');
+    } catch (error) {
+      // 에러 발생 시 사용자에게 알림
+      setSaveError('저장에 실패했습니다. 다시 시도해주세요.');
+      console.error('Save failed:', error);
+    }
   };
 
   const handleSkip = () => {
@@ -44,6 +73,27 @@ export default function ProfilePage() {
 
       <main className="max-w-2xl mx-auto px-4 py-12">
         <div className="bg-white rounded-2xl shadow-md p-8 border border-[#E5E7EB]">
+          {/* 로딩 중 */}
+          {isLoading && !preferences.food ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-12 h-12 border-4 border-[#5B8DC8] border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-gray-600">프로필을 불러오는 중...</p>
+            </div>
+          ) : error && !isLoading ? (
+            /* 에러 상태 */
+            <div className="text-center py-12">
+              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+              <p className="text-red-700 mb-4">{error}</p>
+              <button
+                onClick={() => fetchUserProfile(CURRENT_USER_ID)}
+                className="px-6 py-2 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] transition-all"
+              >
+                다시 시도
+              </button>
+            </div>
+          ) : (
+            /* 정상 상태 - 프로필 폼 */
+            <>
           {/* 소개 */}
           <div className="text-center mb-8">
             <svg className="w-20 h-20 mx-auto mb-4 text-[#5B8DC8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,20 +138,39 @@ export default function ProfilePage() {
             </p>
           </div>
 
+          {/* 에러 메시지 */}
+          {(error || saveError) && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700">{saveError || error}</p>
+            </div>
+          )}
+
           {/* 버튼 */}
           <div className="flex gap-3">
             <button
               onClick={handleSkip}
-              className="flex-1 px-6 py-3 border-2 border-[#E5E7EB] text-[#6B7280] rounded-lg hover:bg-white hover:border-[#5B8DC8] hover:text-[#5B8DC8] transition-all cursor-pointer font-medium"
+              disabled={isLoading}
+              className="flex-1 px-6 py-3 border-2 border-[#E5E7EB] text-[#6B7280] rounded-lg hover:bg-white hover:border-[#5B8DC8] hover:text-[#5B8DC8] transition-all cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               건너뛰기
             </button>
             <button
               onClick={handleSave}
-              className="flex-1 px-6 py-3 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] hover:shadow-lg transition-all cursor-pointer font-bold flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="flex-1 px-6 py-3 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] hover:shadow-lg transition-all cursor-pointer font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Check className="w-5 h-5" />
-              저장하고 시작하기
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  저장 중...
+                </>
+              ) : (
+                <>
+                  <Check className="w-5 h-5" />
+                  저장하고 시작하기
+                </>
+              )}
             </button>
           </div>
 
@@ -109,6 +178,8 @@ export default function ProfilePage() {
           <p className="text-center text-sm text-gray-500 mt-4">
             설정을 건너뛰어도 서비스를 이용할 수 있어요
           </p>
+            </>
+          )}
         </div>
       </main>
     </div>

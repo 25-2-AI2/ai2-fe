@@ -25,6 +25,13 @@ export interface Restaurant {
   summary: string;
   reviews: Review[];
   openingHours?: string;
+  // API 응답 필드 추가
+  place_id?: string;
+  grid?: string;
+  user_ratings_total?: number;
+  primaryType?: string;
+  district?: string;
+  generated_tags?: string[];
 }
 
 export interface SearchResponse {

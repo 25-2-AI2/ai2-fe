@@ -1,5 +1,7 @@
 import { Restaurant } from '@/shared/types/restaurant';
 
+// 데모 데이터는 제거되었습니다.
+// 실제 데이터는 API를 통해 불러옵니다.
 export const DEMO_RESTAURANTS: Restaurant[] = [
   {
     id: 'rest-1',

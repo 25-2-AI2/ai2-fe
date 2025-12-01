@@ -9,8 +9,8 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 37.5172, // 타임스퀘어
-  lng: 126.9033,
+  lat: 40.7580, // NYC Times Square로 기본값
+  lng: -73.9855,
 };
 
 const mapOptions: google.maps.MapOptions = {
@@ -29,6 +29,7 @@ export function GoogleMapView({ restaurants }: Props) {
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const { selectedRestaurantId, setSelectedRestaurant } = useChatStore();
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [showMarkers, setShowMarkers] = useState(false);
 
   const onMapLoad = useCallback((loadedMap: google.maps.Map) => {
     setMap(loadedMap);
@@ -48,6 +49,8 @@ export function GoogleMapView({ restaurants }: Props) {
         }
       });
     }
+    // 지도 로드 후 마커 표시
+    setTimeout(() => setShowMarkers(true), 100);
   }, [restaurants]);
 
   return (
@@ -58,7 +61,7 @@ export function GoogleMapView({ restaurants }: Props) {
       options={mapOptions}
       onLoad={onMapLoad}
     >
-      {restaurants.map((restaurant, index) => {
+      {showMarkers && restaurants.map((restaurant, index) => {
         return (
           <Marker
             key={restaurant.id}
@@ -66,14 +69,6 @@ export function GoogleMapView({ restaurants }: Props) {
             onClick={() => {
               setActiveMarker(restaurant.id);
               setSelectedRestaurant(restaurant.id);
-            }}
-            icon={{
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: selectedRestaurantId === restaurant.id ? 18 : 15,
-              fillColor: selectedRestaurantId === restaurant.id ? '#5B8DC8' : '#EF4444',
-              fillOpacity: 1,
-              strokeColor: '#ffffff',
-              strokeWeight: 4,
             }}
           />
         );

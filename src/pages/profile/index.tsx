@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useProfileStore } from '@/shared/store/profileStore';
+import { useAuthStore } from '@/shared/store/authStore';
 import { PreferenceSlider } from '@/features/profile/components/PreferenceSlider';
 import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -18,16 +19,16 @@ const ASPECTS = [
 export default function ProfilePage() {
   const router = useRouter();
   const { profile, updateProfile, setProfileCompleted, saveUserPreferences, fetchUserProfile, isLoading, error } = useProfileStore();
+  const { userId } = useAuthStore();
   const [preferences, setPreferences] = useState(profile.aspects);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // TODO: 실제 사용자 ID는 인증 시스템에서 가져와야 합니다
-  const CURRENT_USER_ID = 1; // 임시 하드코딩
-
   // 페이지 진입 시 서버에서 유저 데이터 불러오기
   useEffect(() => {
-    fetchUserProfile(CURRENT_USER_ID);
-  }, [fetchUserProfile]);
+    if (userId) {
+      fetchUserProfile(userId);
+    }
+  }, [userId, fetchUserProfile]);
 
   // 프로필이 로드되면 로컬 상태 업데이트
   useEffect(() => {
@@ -35,6 +36,11 @@ export default function ProfilePage() {
   }, [profile.aspects]);
 
   const handleSave = async () => {
+    if (!userId) {
+      setSaveError('사용자 정보가 없습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+    
     setSaveError(null);
     
     // 로컬 상태 먼저 업데이트
@@ -43,7 +49,7 @@ export default function ProfilePage() {
 
     try {
       // API 호출하여 서버에 저장
-      await saveUserPreferences(CURRENT_USER_ID);
+      await saveUserPreferences(userId);
       router.push('/');
     } catch (error) {
       // 에러 발생 시 사용자에게 알림
@@ -85,7 +91,7 @@ export default function ProfilePage() {
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
               <p className="text-red-700 mb-4">{error}</p>
               <button
-                onClick={() => fetchUserProfile(CURRENT_USER_ID)}
+                onClick={() => userId && fetchUserProfile(userId)}
                 className="px-6 py-2 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] transition-all"
               >
                 다시 시도

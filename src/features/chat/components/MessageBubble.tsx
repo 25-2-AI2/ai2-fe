@@ -6,8 +6,16 @@ interface Props {
   message: Message;
 }
 
+/**
+ * 채팅 메시지 버블 컴포넌트
+ * - 애니메이션 적용
+ * - 사용자/AI 메시지 구분
+ * - 접근성 고려 (시맨틱 마크업)
+ */
 export function MessageBubble({ message }: Props) {
   const isUser = message.role === 'user';
+  
+  console.log('MessageBubble render:', { role: message.role, content: message.content, isUser });
 
   return (
     <motion.div
@@ -15,27 +23,30 @@ export function MessageBubble({ message }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className={cn('flex', isUser ? 'justify-end' : 'justify-start')}
+      role="article"
+      aria-label={`${isUser ? '사용자' : 'AI'} 메시지`}
     >
       <div
         className={cn(
           'max-w-[85%] px-4 py-3 rounded-lg',
           isUser
             ? 'bg-[#5B8DC8] text-white rounded-br-none'
-            : 'bg-white text-gray-900 border border-[#E5E7EB] rounded-bl-none'
+            : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
         )}
       >
         <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        <p
+        <time
           className={cn(
-            'text-sm mt-2',
-            isUser ? 'text-white/70' : 'text-[#9AA6B2]'
+            'text-xs mt-2 block',
+            isUser ? 'text-white/80' : 'text-gray-500'
           )}
+          dateTime={new Date(message.timestamp).toISOString()}
         >
           {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
             hour: '2-digit',
             minute: '2-digit',
           })}
-        </p>
+        </time>
       </div>
     </motion.div>
   );

@@ -1,28 +1,84 @@
 import { useRouter } from 'next/router';
-import { DEMO_RESTAURANTS } from '@/shared/mock/restaurants';
-import { ArrowLeft, MapPin, Clock, DollarSign, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { getRestaurantDetail, getRecommendedRestaurants, RestaurantDetail, RecommendedRestaurant } from '@/shared/api/restaurantApi';
+import { ArrowLeft, MapPin, Star, Loader2, AlertCircle, Users, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { RestaurantCard } from '@/features/restaurant/components/RestaurantCard';
-
-const ASPECT_LABELS = {
-  taste: { label: '맛' },
-  price: { label: '가성비' },
-  atmosphere: { label: '분위기' },
-  hygiene: { label: '위생' },
-};
+import { SingleRestaurantMap } from '@/features/map/components/SingleRestaurantMap';
 
 export default function RestaurantDetailPage() {
   const router = useRouter();
   const { id } = router.query;
+  
+  const [restaurant, setRestaurant] = useState<RestaurantDetail | null>(null);
+  const [recommendedRestaurants, setRecommendedRestaurants] = useState<RecommendedRestaurant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingRecommended, setIsLoadingRecommended] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showRecommended, setShowRecommended] = useState(false);
 
-  const restaurant = DEMO_RESTAURANTS.find((r) => r.id === id);
+  // 레스토랑 상세 정보 로드
+  useEffect(() => {
+    if (!id || typeof id !== 'string') return;
 
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const detailData = await getRestaurantDetail(id);
+        setRestaurant(detailData);
+      } catch (err) {
+        console.error('Failed to fetch restaurant data:', err);
+        setError('식당 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // 추천 식당 로드
+  const handleLoadRecommended = async () => {
+    if (!id || typeof id !== 'string' || recommendedRestaurants.length > 0) {
+      setShowRecommended(true);
+      return;
+    }
+
+    setIsLoadingRecommended(true);
+    try {
+      const recommendData = await getRecommendedRestaurants(id);
+      setRecommendedRestaurants(recommendData);
+      setShowRecommended(true);
+    } catch (err) {
+      console.error('Failed to fetch recommended restaurants:', err);
+    } finally {
+      setIsLoadingRecommended(false);
+    }
+  };
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#5B8DC8] animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">식당 정보를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 또는 데이터 없음
   if (!restaurant) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F3F4F6]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <p className="text-[#9AA6B2]">식당을 찾을 수 없습니다</p>
-          <Link href="/" className="text-[#5B8DC8] hover:underline mt-2 block">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600 mb-4">
+            {error || '식당을 찾을 수 없습니다'}
+          </p>
+          <Link href="/" className="text-[#5B8DC8] hover:underline">
             홈으로 돌아가기
           </Link>
         </div>
@@ -30,169 +86,157 @@ export default function RestaurantDetailPage() {
     );
   }
 
-  // 비슷한 가게 (같은 카테고리)
-  const similarRestaurants = DEMO_RESTAURANTS.filter(
-    (r) => r.category === restaurant.category && r.id !== restaurant.id
-  ).slice(0, 5);
-
   return (
-    <div className="min-h-screen bg-[#F3F4F6]">
+    <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <header className="bg-white border-b border-[#E5E7EB] sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-[#E5E7EB] rounded-lg transition-all cursor-pointer"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-all"
           >
-            <ArrowLeft className="w-5 h-5 text-[#9AA6B2]" />
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <h1 className="text-lg font-bold text-gray-900">식당 상세</h1>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* 메인 정보 */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8 border border-[#E5E7EB]">
-          {/* 이미지 */}
-          <div className="relative h-80 bg-[#F9FAFB] flex items-center justify-center">
-            <svg className="w-32 h-32 text-[#BCCCDC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* 지도 영역 */}
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-gray-200">
+          <div className="h-[300px]">
+            <SingleRestaurantMap 
+              address={restaurant.address}
+              name={restaurant.name}
+            />
           </div>
+        </div>
 
+        {/* 메인 정보 카드 */}
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-gray-200">
           <div className="p-6">
-            {/* 헤더 */}
-            <div className="flex items-start justify-between mb-4">
+            {/* 식당 이름 */}
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+              {restaurant.name}
+            </h1>
+
+            {/* 평점 및 리뷰 수 */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-1">
+                <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                <span className="text-xl font-bold text-gray-900">{restaurant.rating}</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-600">
+                <Users className="w-4 h-4" />
+                <span className="text-sm">리뷰 {restaurant.user_ratings_total.toLocaleString()}개</span>
+              </div>
+            </div>
+
+            {/* 주소 */}
+            <div className="flex items-start gap-2 mb-4">
+              <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+              <p className="text-gray-700">{restaurant.address}</p>
+            </div>
+
+            {/* 추가 정보 */}
+            <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-gray-200">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {restaurant.name}
-                </h1>
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 bg-[#F9FAFB] text-gray-700 font-medium rounded-full border border-[#E5E7EB]">
-                    {restaurant.category}
+                <p className="text-sm text-gray-500 mb-1">지역</p>
+                <p className="font-medium text-gray-900">{restaurant.district}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">그리드</p>
+                <p className="font-medium text-gray-900">{restaurant.grid}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-sm text-gray-500 mb-1">카테고리</p>
+                <p className="font-medium text-gray-900">
+                  {restaurant.primaryType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </p>
+              </div>
+            </div>
+
+            {/* 태그 */}
+            <div className="mt-4">
+              <p className="text-sm text-gray-500 mb-2">특징</p>
+              <div className="flex flex-wrap gap-2">
+                {restaurant.generated_tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full"
+                  >
+                    {tag}
                   </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center gap-1 mb-1">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <span className="text-2xl font-bold text-gray-900">{restaurant.rating}</span>
-                </div>
-                <p className="text-sm text-[#9AA6B2]">평점</p>
+                ))}
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* 요약 */}
-            <p className="text-lg text-gray-700 mb-6">{restaurant.summary}</p>
+        {/* 비슷한 식당 추천 버튼 */}
+        <div className="mb-6">
+          <button
+            onClick={handleLoadRecommended}
+            disabled={isLoadingRecommended}
+            className="w-full bg-[#5B8DC8] hover:bg-[#4A7AB7] text-white font-bold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {isLoadingRecommended ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>불러오는 중...</span>
+              </>
+            ) : (
+              <>
+                <span>비슷한 식당 추천받기</span>
+                <ChevronRight className="w-5 h-5" />
+              </>
+            )}
+          </button>
+        </div>
 
-            {/* 기본 정보 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="flex items-center gap-3 p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-                <MapPin className="w-5 h-5 text-[#9AA6B2]" />
-                <div>
-                  <p className="text-sm text-[#9AA6B2]">주소</p>
-                  <p className="font-medium text-gray-900">{restaurant.address}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-                <Clock className="w-5 h-5 text-[#9AA6B2]" />
-                <div>
-                  <p className="text-sm text-[#9AA6B2]">영업시간</p>
-                  <p className="font-medium text-gray-900">{restaurant.openingHours}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-                <div className="w-5 h-5 flex items-center justify-center text-[#9AA6B2] font-bold text-lg">
-                  ₩
-                </div>
-                <div>
-                  <p className="text-sm text-[#9AA6B2]">가격대</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Aspect 점수 */}
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">평가 항목</h2>
-              <div className="space-y-4">
-                {Object.entries(restaurant.scores)
-                  .filter(([key]) => key !== 'overall')
-                  .map(([key, value]) => {
-                    const aspect = ASPECT_LABELS[key as keyof typeof ASPECT_LABELS];
-                    return (
-                      <div key={key}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-bold text-gray-900">{aspect.label}</span>
-                          <span className="text-lg font-bold text-gray-900">{value.toFixed(1)}</span>
-                        </div>
-                        <div className="w-full bg-[#F3F4F6] rounded-full h-3 border border-[#E5E7EB]">
-                          <div
-                            className="bg-[#5B8DC8] h-3 rounded-full transition-all"
-                            style={{ width: `${(value / 5) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-
-            {/* 리뷰 */}
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">리뷰</h2>
-              <div className="space-y-3">
-                {restaurant.reviews.map((review, idx) => (
-                  <div key={idx} className="p-4 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-bold text-gray-900">
-                        {ASPECT_LABELS[review.aspect].label}
-                      </span>
-                      {review.rating && (
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                          <span className="text-sm font-medium text-gray-900">{review.rating}</span>
-                        </div>
-                      )}
+        {/* 추천 식당 목록 */}
+        {showRecommended && recommendedRestaurants.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">비슷한 식당</h2>
+            {recommendedRestaurants.map((rec) => (
+              <Link
+                key={rec.place_id}
+                href={`/restaurant/${rec.place_id}`}
+                className="block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-md hover:border-[#5B8DC8] transition-all"
+              >
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-bold text-gray-900">{rec.name}</h3>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <span className="font-medium text-gray-900">{rec.rating}</span>
                     </div>
-                    <p className="text-gray-700">{review.text}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* 비슷한 가게 */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#E5E7EB]">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              이 가게와 비슷한 {restaurant.category} 맛집
-            </h2>
-            <button
-              onClick={() => {
-                router.push(`/?category=${encodeURIComponent(restaurant.category)}`);
-              }}
-              className="px-4 py-2 text-sm font-bold text-[#5B8DC8] bg-[#F9FAFB] border border-[#5B8DC8] rounded-lg hover:bg-[#5B8DC8] hover:text-white hover:shadow-md transition-all cursor-pointer"
-            >
-              비슷한 분위기 더 보기
-            </button>
-          </div>
-          {similarRestaurants.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="flex gap-4 pb-4">
-                {similarRestaurants.map((r) => (
-                  <div key={r.id} className="shrink-0">
-                    <RestaurantCard restaurant={r} />
+                  <p className="text-sm text-gray-600 mb-2 flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    {rec.address}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {rec.generated_tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="text-[#9AA6B2] text-center py-8">
-              비슷한 카테고리의 다른 맛집을 찾고 있어요. 위 버튼을 눌러 더 많은 {restaurant.category} 맛집을 확인해보세요!
-            </p>
-          )}
-        </div>
+
+                  <p className="text-sm text-[#5B8DC8] font-medium">
+                    💡 {rec.match_reason}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

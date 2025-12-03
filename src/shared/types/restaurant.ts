@@ -12,6 +12,36 @@ export interface Review {
   rating?: number;
 }
 
+/**
+ * RAG 검색 결과로 반환되는 레스토랑 정보
+ * POST /chat/search 응답에서 사용
+ */
+export interface RestaurantSearchResult {
+  place_id: string;
+  name: string;
+  rating: number | null;
+  generated_tags: string[];
+  score: number | null;
+  korean_pattern: string | null;
+}
+
+/**
+ * 지도 표시용 레스토랑 정보
+ * RestaurantSearchResult + 상세 정보(address, 좌표 등) 조합
+ */
+export interface RestaurantWithCoords extends RestaurantSearchResult {
+  address: string;
+  lat: number;
+  lng: number;
+  grid?: string;
+  user_ratings_total?: number;
+  primaryType?: string;
+  district?: string;
+}
+
+/**
+ * 기존 Restaurant 인터페이스 (레거시 호환용)
+ */
 export interface Restaurant {
   id: string;
   name: string;

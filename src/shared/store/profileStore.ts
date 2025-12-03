@@ -58,13 +58,13 @@ export const useProfileStore = create<ProfileStore>()(
               id: data.id,
               email: data.email,
               aspects: {
-                food: data.tags.food,
-                service: data.tags.service,
-                ambience: data.tags.ambience,
-                price: data.tags.price,
-                hygiene: data.tags.hygiene,
-                waiting: data.tags.waiting,
-                accessibility: data.tags.accessibility,
+                food: data.tags.food ?? 3,
+                service: data.tags.service ?? 3,
+                ambience: data.tags.ambience ?? 3,
+                price: data.tags.price ?? 3,
+                hygiene: data.tags.hygiene ?? 3,
+                waiting: data.tags.waiting ?? 3,
+                accessibility: data.tags.accessibility ?? 3,
               },
               updatedAt: new Date(),
             },
@@ -72,11 +72,12 @@ export const useProfileStore = create<ProfileStore>()(
             isLoading: false,
           });
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : '프로필을 불러오는데 실패했습니다.',
-            isLoading: false,
-          });
+          // API 실패 시 기본값 유지 (에러 표시하지 않음)
           console.error('Failed to fetch user profile:', error);
+          set({
+            isLoading: false,
+            error: null,  // 에러 메시지 숨김
+          });
         }
       },
 
@@ -102,12 +103,14 @@ export const useProfileStore = create<ProfileStore>()(
             isLoading: false,
           });
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : '프로필 저장에 실패했습니다.',
-            isLoading: false,
-          });
+          // API 실패해도 로컬 상태는 유지
           console.error('Failed to save user preferences:', error);
-          throw error; // 에러를 다시 throw하여 컴포넌트에서 처리 가능하게 함
+          set({
+            hasSetProfile: true,  // 로컬에는 저장된 것으로 처리
+            isLoading: false,
+            error: null,
+          });
+          // throw하지 않음 - 로컬 저장은 성공으로 처리
         }
       },
     }),

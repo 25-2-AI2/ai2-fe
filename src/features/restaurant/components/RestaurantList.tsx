@@ -1,10 +1,10 @@
-import { Restaurant } from '@/shared/types/restaurant';
+import { RestaurantWithCoords } from '@/shared/types/restaurant';
 import { RestaurantCard } from './RestaurantCard';
 import { useEffect, useRef } from 'react';
 import { useChatStore } from '@/shared/store/chatStore';
 
 interface Props {
-  restaurants: Restaurant[];
+  restaurants: RestaurantWithCoords[];
 }
 
 export function RestaurantList({ restaurants }: Props) {
@@ -32,8 +32,8 @@ export function RestaurantList({ restaurants }: Props) {
     >
       {restaurants.map((restaurant) => (
         <div
-          key={restaurant.id}
-          data-restaurant-id={restaurant.id}
+          key={restaurant.place_id}
+          data-restaurant-id={restaurant.place_id}
           className="snap-center shrink-0"
         >
           <RestaurantCard restaurant={restaurant} />

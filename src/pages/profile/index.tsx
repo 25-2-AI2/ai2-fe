@@ -16,14 +16,23 @@ const ASPECTS = [
   { key: 'accessibility', label: '접근성' },
 ] as const;
 
+const CURRENT_USER_ID = 1; // 하드코딩 유저 1명으로 테스트
+
 export default function ProfilePage() {
   const router = useRouter();
   const { profile, updateProfile, setProfileCompleted, saveUserPreferences, fetchUserProfile, isLoading, error } = useProfileStore();
-  const { userId } = useAuthStore();
+  const { userId, fetchUserInfo } = useAuthStore();
   const [preferences, setPreferences] = useState(profile.aspects);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // 페이지 진입 시 서버에서 유저 데이터 불러오기
+  // 페이지 진입 시 사용자 정보가 없으면 로드
+  useEffect(() => {
+    if (!userId) {
+      fetchUserInfo(CURRENT_USER_ID);
+    }
+  }, [userId, fetchUserInfo]);
+
+  // userId가 있으면 프로필 정보 로드
   useEffect(() => {
     if (userId) {
       fetchUserProfile(userId);
@@ -52,9 +61,10 @@ export default function ProfilePage() {
       await saveUserPreferences(userId);
       router.push('/');
     } catch (error) {
-      // 에러 발생 시 사용자에게 알림
-      setSaveError('저장에 실패했습니다. 다시 시도해주세요.');
+      // 에러 발생 시 사용자에게 알림 (하지만 로컬에는 저장됨)
       console.error('Save failed:', error);
+      // API 실패해도 홈으로 이동 (로컬 상태는 저장됨)
+      router.push('/');
     }
   };
 
@@ -80,22 +90,10 @@ export default function ProfilePage() {
       <main className="max-w-2xl mx-auto px-4 py-12">
         <div className="bg-white rounded-2xl shadow-md p-8 border border-[#E5E7EB]">
           {/* 로딩 중 */}
-          {isLoading && !preferences.food ? (
+          {(isLoading || !userId) && !preferences.food ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-12 h-12 border-4 border-[#5B8DC8] border-t-transparent rounded-full animate-spin mb-4" />
               <p className="text-gray-600">프로필을 불러오는 중...</p>
-            </div>
-          ) : error && !isLoading ? (
-            /* 에러 상태 */
-            <div className="text-center py-12">
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <p className="text-red-700 mb-4">{error}</p>
-              <button
-                onClick={() => userId && fetchUserProfile(userId)}
-                className="px-6 py-2 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] transition-all"
-              >
-                다시 시도
-              </button>
             </div>
           ) : (
             /* 정상 상태 - 프로필 폼 */
@@ -145,10 +143,10 @@ export default function ProfilePage() {
           </div>
 
           {/* 에러 메시지 */}
-          {(error || saveError) && (
+          {saveError && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
               <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700">{saveError || error}</p>
+              <p className="text-sm text-red-700">{saveError}</p>
             </div>
           )}
 
@@ -163,7 +161,7 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={handleSave}
-              disabled={isLoading}
+              disabled={isLoading || !userId}
               className="flex-1 px-6 py-3 bg-[#5B8DC8] text-white rounded-lg hover:bg-[#4A7AB7] hover:shadow-lg transition-all cursor-pointer font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (

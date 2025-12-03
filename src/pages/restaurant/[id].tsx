@@ -124,12 +124,18 @@ export default function RestaurantDetailPage() {
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-1">
                 <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                <span className="text-xl font-bold text-gray-900">{restaurant.rating}</span>
+                <span className="text-xl font-bold text-gray-900">
+                  {restaurant.rating ?? 'N/A'}
+                </span>
               </div>
-              <div className="flex items-center gap-1 text-gray-600">
-                <Users className="w-4 h-4" />
-                <span className="text-sm">리뷰 {restaurant.user_ratings_total.toLocaleString()}개</span>
-              </div>
+              {restaurant.user_ratings_total && (
+                <div className="flex items-center gap-1 text-gray-600">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm">
+                    리뷰 {restaurant.user_ratings_total.toLocaleString()}개
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* 주소 */}
@@ -144,32 +150,38 @@ export default function RestaurantDetailPage() {
                 <p className="text-sm text-gray-500 mb-1">지역</p>
                 <p className="font-medium text-gray-900">{restaurant.district}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">그리드</p>
-                <p className="font-medium text-gray-900">{restaurant.grid}</p>
-              </div>
-              <div className="col-span-2">
-                <p className="text-sm text-gray-500 mb-1">카테고리</p>
-                <p className="font-medium text-gray-900">
-                  {restaurant.primaryType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                </p>
-              </div>
+              {restaurant.grid && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">그리드</p>
+                  <p className="font-medium text-gray-900">{restaurant.grid}</p>
+                </div>
+              )}
+              {restaurant.primaryType && (
+                <div className="col-span-2">
+                  <p className="text-sm text-gray-500 mb-1">카테고리</p>
+                  <p className="font-medium text-gray-900">
+                    {restaurant.primaryType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* 태그 */}
-            <div className="mt-4">
-              <p className="text-sm text-gray-500 mb-2">특징</p>
-              <div className="flex flex-wrap gap-2">
-                {restaurant.generated_tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
+            {restaurant.generated_tags.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-2">특징</p>
+                <div className="flex flex-wrap gap-2">
+                  {restaurant.generated_tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -209,7 +221,9 @@ export default function RestaurantDetailPage() {
                     <h3 className="text-lg font-bold text-gray-900">{rec.name}</h3>
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="font-medium text-gray-900">{rec.rating}</span>
+                      <span className="font-medium text-gray-900">
+                        {rec.rating ?? 'N/A'}
+                      </span>
                     </div>
                   </div>
 
@@ -218,20 +232,24 @@ export default function RestaurantDetailPage() {
                     {rec.address}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {rec.generated_tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  {rec.generated_tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {rec.generated_tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                  <p className="text-sm text-[#5B8DC8] font-medium">
-                    💡 {rec.match_reason}
-                  </p>
+                  {rec.match_reason && (
+                    <p className="text-sm text-[#5B8DC8] font-medium">
+                      💡 {rec.match_reason}
+                    </p>
+                  )}
                 </div>
               </Link>
             ))}

@@ -1,27 +1,36 @@
 import { create } from 'zustand';
 import { Message } from '@/shared/types/chat';
+import { RestaurantSearchResult, RestaurantWithCoords } from '@/shared/types/restaurant';
 
 interface ChatStore {
   messages: Message[];
   currentQuery: string;
-  recommendedRestaurantIds: string[];
+  // RAG 검색 결과 (백엔드 응답 그대로)
+  recommendedRestaurants: RestaurantSearchResult[];
+  // 지도 표시용 (상세 정보 + 좌표 포함)
+  restaurantsWithCoords: RestaurantWithCoords[];
   selectedRestaurantId: string | null;
   isLoading: boolean;
+  isLoadingCoords: boolean;
   
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   setQuery: (query: string) => void;
-  setRecommendedRestaurants: (ids: string[]) => void;
+  setRecommendedRestaurants: (restaurants: RestaurantSearchResult[]) => void;
+  setRestaurantsWithCoords: (restaurants: RestaurantWithCoords[]) => void;
   setSelectedRestaurant: (id: string | null) => void;
   setLoading: (loading: boolean) => void;
+  setLoadingCoords: (loading: boolean) => void;
   clearMessages: () => void;
 }
 
 export const useChatStore = create<ChatStore>()((set) => ({
   messages: [],
   currentQuery: '',
-  recommendedRestaurantIds: [],
+  recommendedRestaurants: [],
+  restaurantsWithCoords: [],
   selectedRestaurantId: null,
   isLoading: false,
+  isLoadingCoords: false,
 
   addMessage: (message) =>
     set((state) => ({
@@ -37,11 +46,20 @@ export const useChatStore = create<ChatStore>()((set) => ({
 
   setQuery: (query) => set({ currentQuery: query }),
   
-  setRecommendedRestaurants: (ids) => set({ recommendedRestaurantIds: ids }),
+  setRecommendedRestaurants: (restaurants) => set({ recommendedRestaurants: restaurants }),
+  
+  setRestaurantsWithCoords: (restaurants) => set({ restaurantsWithCoords: restaurants }),
   
   setSelectedRestaurant: (id) => set({ selectedRestaurantId: id }),
   
   setLoading: (loading) => set({ isLoading: loading }),
   
-  clearMessages: () => set({ messages: [], currentQuery: '', recommendedRestaurantIds: [] }),
+  setLoadingCoords: (loading) => set({ isLoadingCoords: loading }),
+  
+  clearMessages: () => set({ 
+    messages: [], 
+    currentQuery: '', 
+    recommendedRestaurants: [],
+    restaurantsWithCoords: [],
+  }),
 }));

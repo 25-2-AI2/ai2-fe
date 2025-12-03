@@ -1,7 +1,8 @@
 import { GoogleMap, Marker, OverlayView } from '@react-google-maps/api';
-import { useState, useCallback, useEffect } from 'react';
-import { Restaurant } from '@/shared/types/restaurant';
+import { useState, useCallback } from 'react';
+import { RestaurantWithCoords } from '@/shared/types/restaurant';
 import { useChatStore } from '@/shared/store/chatStore';
+import { Star } from 'lucide-react';
 
 const mapContainerStyle = {
   width: '100%',
@@ -22,7 +23,7 @@ const mapOptions: google.maps.MapOptions = {
 };
 
 interface Props {
-  restaurants: Restaurant[];
+  restaurants: RestaurantWithCoords[];
 }
 
 export function GoogleMapView({ restaurants }: Props) {
@@ -42,7 +43,7 @@ export function GoogleMapView({ restaurants }: Props) {
       loadedMap.fitBounds(bounds);
       
       // 너무 확대되는 것 방지
-      const listener = google.maps.event.addListenerOnce(loadedMap, 'idle', () => {
+      google.maps.event.addListenerOnce(loadedMap, 'idle', () => {
         const currentZoom = loadedMap.getZoom();
         if (currentZoom && currentZoom > 16) {
           loadedMap.setZoom(16);
@@ -53,6 +54,24 @@ export function GoogleMapView({ restaurants }: Props) {
     setTimeout(() => setShowMarkers(true), 100);
   }, [restaurants]);
 
+  // 레스토랑 목록이 변경되면 지도 범위 조정
+  const handleRestaurantsChange = useCallback(() => {
+    if (map && restaurants.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      restaurants.forEach((r) => {
+        bounds.extend({ lat: r.lat, lng: r.lng });
+      });
+      map.fitBounds(bounds);
+    }
+  }, [map, restaurants]);
+
+  // restaurants가 변경될 때 지도 범위 조정
+  useState(() => {
+    handleRestaurantsChange();
+  });
+
+  const activeRestaurant = restaurants.find(r => r.place_id === activeMarker);
+
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
@@ -61,24 +80,24 @@ export function GoogleMapView({ restaurants }: Props) {
       options={mapOptions}
       onLoad={onMapLoad}
     >
-      {showMarkers && restaurants.map((restaurant, index) => {
+      {showMarkers && restaurants.map((restaurant) => {
         return (
           <Marker
-            key={restaurant.id}
+            key={restaurant.place_id}
             position={{ lat: restaurant.lat, lng: restaurant.lng }}
             onClick={() => {
-              setActiveMarker(restaurant.id);
-              setSelectedRestaurant(restaurant.id);
+              setActiveMarker(restaurant.place_id);
+              setSelectedRestaurant(restaurant.place_id);
             }}
           />
         );
       })}
       
-      {activeMarker && restaurants.find(r => r.id === activeMarker) && (
+      {activeMarker && activeRestaurant && (
         <OverlayView
           position={{
-            lat: restaurants.find(r => r.id === activeMarker)!.lat,
-            lng: restaurants.find(r => r.id === activeMarker)!.lng,
+            lat: activeRestaurant.lat,
+            lng: activeRestaurant.lng,
           }}
           mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
         >
@@ -86,7 +105,7 @@ export function GoogleMapView({ restaurants }: Props) {
             {/* InfoWindow 스타일의 컨테이너 */}
             <div 
               className="bg-white rounded-lg shadow-xl p-3 relative border border-gray-200"
-              style={{ width: '240px', maxWidth: '240px', minWidth: '240px' }}
+              style={{ width: '280px', maxWidth: '280px', minWidth: '280px' }}
             >
               {/* 닫기 버튼 */}
               <button
@@ -98,22 +117,40 @@ export function GoogleMapView({ restaurants }: Props) {
               </button>
               
               {/* 내용 */}
-              <h3 className="font-bold text-gray-900 mb-1 text-sm">
-                {restaurants.find(r => r.id === activeMarker)!.name}
+              <h3 className="font-bold text-gray-900 mb-1 text-sm pr-6">
+                {activeRestaurant.name}
               </h3>
-              <p className="text-xs text-[#9AA6B2] mb-2">
-                {restaurants.find(r => r.id === activeMarker)!.category}
-              </p>
+              
+              {/* 평점 */}
               <div className="flex items-center gap-1 mb-2">
-                <svg className="w-4 h-4 text-yellow-400 fill-current flex-shrink-0" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
+                <Star className="w-4 h-4 text-yellow-400 fill-current" />
                 <span className="font-medium text-gray-900 text-sm">
-                  {restaurants.find(r => r.id === activeMarker)!.rating}
+                  {activeRestaurant.rating ?? 'N/A'}
                 </span>
+                {activeRestaurant.user_ratings_total && (
+                  <span className="text-xs text-gray-500">
+                    ({activeRestaurant.user_ratings_total.toLocaleString()}개 리뷰)
+                  </span>
+                )}
               </div>
+
+              {/* 태그 */}
+              {activeRestaurant.generated_tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {activeRestaurant.generated_tags.slice(0, 3).map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* 주소 */}
               <p className="text-xs text-[#9AA6B2] leading-relaxed">
-                {restaurants.find(r => r.id === activeMarker)!.summary}
+                {activeRestaurant.address}
               </p>
               
               {/* 말풍선 꼬리 */}

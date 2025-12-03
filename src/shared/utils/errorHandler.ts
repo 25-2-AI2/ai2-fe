@@ -10,14 +10,14 @@ import { ERROR_MESSAGES } from '@/shared/constants/messages';
  */
 export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    // 네트워크 에러
-    if (!error.response) {
-      return ERROR_MESSAGES.NETWORK;
-    }
-
     // 타임아웃
     if (error.code === 'ECONNABORTED') {
       return ERROR_MESSAGES.TIMEOUT;
+    }
+
+    // 네트워크 에러
+    if (!error.response) {
+      return ERROR_MESSAGES.NETWORK;
     }
 
     // 서버 에러

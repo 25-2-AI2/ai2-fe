@@ -1,0 +1,239 @@
+{
+  "answer": "안녕하세요! 좋은 이탈리안 레스토랑을 찾고 계시군요. 추천드리는 'Carbone New York'은 세련된 분위기와 훌륭한 서비스로 유명하며, 'Fiaschetteria Pistoia'는 아늑한 인테리어와 정통 이탈리아 요리를 제공합니다. 이 두 곳 모두 특별한 경험을 선사할 거예요!",
+  "restaurants": [
+    {
+      "place_id": "ChIJKTH6LHdZwokRtjn3XCmyqJE",
+      "name": "Fiaschetteria Pistoia",
+      "rating": 4.6,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 3.036276099437066,
+      "korean_pattern": "[현지인 리뷰] [Non-Korean Reviewer Pattern]  \n비한국인 리뷰어들은 정통 이탈리안 요리에 대해 정말 좋아하는 모습을 보여줘. 특히 수제 파스타와 프로슈토가 인상적이라고 많이 언급해. 분위기도 활기차다고 하지만, 소음이 좀 심할 때도 있다고 해. 서비스는 대체로 친절하지만, 바쁠 때는 서두르는 느낌이 든다는 의견도 있어."
+    },
+    {
+      "place_id": "ChIJcwRwc4tZwokR2sPvWN0r3h8",
+      "name": "A Pasta Bar",
+      "rating": 4.3,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.9647792068268757,
+      "korean_pattern": "[한국인 리뷰] 분위기가 좋고, 파스타는 고소하고 맛있지만 가격에 비해 양이 적다는 아쉬움이 있어. 서비스는 친절하지만 가끔 불친절한 경우도 있었어. 전반적으로 기대에 미치지 못한 경우가 많았지만, 특별한 날에 가기 좋은 곳이라는 의견이 많아.\n\n[Non-Korean Reviewer Pattern]  \n리뷰를 보면 긍정적인 경험과 부정적인 경험이 섞여 있어. 많은 손님들이 음식과 분위기를 즐기지만, 서비스와 가격 대비 가치에 불만을 표현하는 사람들도 있어. 이 식당은 활기찬 분위기와 독특한 식사 경험 덕분에 종종 추천되지만, 어떤 사람들은 기대에 미치지 못한다고 느끼기도 해."
+    },
+    {
+      "place_id": "ChIJU_NqPQBZwokR2maaBIBP1mI",
+      "name": "Foodance Italian Restaurant",
+      "rating": 4.8,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.9435245791892033,
+      "korean_pattern": "[현지인 리뷰] [Korean Reviewer Pattern]  \n리뷰어들은 자주 진짜 이탈리안 음식과 주인들이 제공하는 따뜻하고 친절한 서비스에 대해 언급해. 분위기는 아늑하고 매력적이라고 많이들 말하고, 라이브 음악이 식사 경험을 더해준다고 좋아하는 손님들도 많아. 일부 손님들은 작은 양과 의무적인 서비스 요금에 대해 걱정하지만, 전반적으로 이 식당은 품질과 분위기로 강력 추천돼."
+    },
+    {
+      "place_id": "ChIJmSvG_ZFZwokRTOFeiLXzkmA",
+      "name": "Carbone New York",
+      "rating": 4.3,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.8695400232617896,
+      "korean_pattern": "[한국인 리뷰] [Korean Reviewer Pattern]  \n한국 리뷰어들은 아늑하면서도 매력적인 분위기를 강조하며 \"복고스럽다\"고 표현했어요. 무료로 제공되는 애피타이저도 좋았다고 하네요. 매운 보드카 리가토니는 꼭 먹어봐야 한다고 자주 언급되었고, 독특한 맛 때문에 다시 가고 싶다는 의견이 많았어요. 서비스도 친절하고 배려가 넘쳐서 전체적인 경험을 더욱 좋게 만들었답니다.\n\n[Non-Korean Reviewer Pattern]  \nNon-Korean reviewers emphasized the exceptional service and the quality of the food, particularly the spicy rigatoni and tortellini. Many felt that the restaurant lived up to its hype, with a few noting that the atmosphere was perfect for special occasions. However, some expressed that the difficulty in securing a reservation and the high prices could be drawbacks."
+    },
+    {
+      "place_id": "ChIJPej-FQD3wokR0prr8I9ftPE",
+      "name": "Crispin's Hell's Kitchen",
+      "rating": 4.8,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.8372918878379005,
+      "korean_pattern": "[현지인 리뷰] [Non-Korean Reviewer Pattern]  \n비한국인 손님들의 리뷰에서는 음식의 뛰어난 품질이 강조돼요. 특히 수제 파스타와 맛있는 소스에 대한 칭찬이 많아요. 서비스도 강점으로 언급되며, 직원들이 친절하고 세심하다는 평가를 받고 있어요. 분위기는 아늑하고 초대하는 느낌이어서 다양한 식사 자리로 좋은 곳이에요."
+    },
+    {
+      "place_id": "ChIJxYXIbL9YwokR7A8e89BZgGA",
+      "name": "Uva",
+      "rating": 4.3,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.821782644352719,
+      "korean_pattern": "[한국인 리뷰] [Korean Reviewer Pattern]  \n한국 리뷰어들은 우바가 전반적으로 괜찮은 이탈리안 레스토랑이라고 표현했어요. \"무난하게 먹기 좋은\" 곳이라고 하더라고요. 리코타 뇨끼 같은 특정 요리는 \"진짜 진짜 맛있어요\"라고 칭찬했어요. 서비스도 친절하다고 했지만, 전체적인 경험은 기대에 미치지 못했다고 느낀 사람들도 있었어요.\n\n[Non-Korean Reviewer Pattern]  \nNon-Korean reviewers had a mix of experiences, with many praising the food's freshness and the cozy atmosphere, while others criticized the service and noise levels. Some highlighted the ricotta gnocchi as a must-try, while others found certain dishes to be bland or overpriced. The service was frequently mentioned, with both positive and negative experiences reported, reflecting a lack of consistency in staff attentiveness."
+    },
+    {
+      "place_id": "ChIJKykw-aZZwokRW7K0ykZUxNo",
+      "name": "La Pecora Bianca Bryant Park",
+      "rating": 4.7,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.8042890545059915,
+      "korean_pattern": "[한국인 리뷰] [Korean Reviewer Pattern]  \n한국 리뷰어들은 음식에 만족감을 표현하며, 특히 파스타가 정말 맛있었다고 하고 분위기도 좋았다고 해. 친절한 서비스와 전반적으로 긍정적인 경험을 언급하면서, 일반적인 이탈리안 레스토랑과 비교했을 때 기대 이상이었다고 강조하는 사람들도 있어. 하지만 공간이 좀 좁고 바쁘다는 언급도 있더라.\n\n[Non-Korean Reviewer Pattern]  \nNon-Korean reviewers generally praise the food quality and service, with many highlighting specific dishes like the tiramisù and various pasta options. The ambiance is often described as stylish and suitable for different occasions, although some find it too noisy at times. While most reviews are positive, there are a few criticisms regarding service speed and certain dishes not meeting expectations."
+    },
+    {
+      "place_id": "ChIJA7FDxRdawokR60802QyPTbM",
+      "name": "Giardino D'Oro",
+      "rating": 4.5,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.788519215758781,
+      "korean_pattern": "[현지인 리뷰] [Non-Korean Reviewer Pattern]  \n비한국인 손님들의 리뷰에서는 이 식당의 진짜 이탈리안 느낌과 뛰어난 서비스에 대한 칭찬이 많았어. 많은 사람들이 음식의 질, 특히 수제 파스타와 해산물 요리에 만족한다고 했고. 하지만 가격과 양에 대한 우려도 있었고, 즐거운 경험이긴 하지만 모든 예산에 맞는 건 아닐 수 있다고 언급했어."
+    },
+    {
+      "place_id": "ChIJCW5gj5ZZwokRtfK4UZxkcr4",
+      "name": "Rosemary's",
+      "rating": 4.3,
+      "generated_tags": [
+        "맛 좋음",
+        "분위기 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.767950639661198,
+      "korean_pattern": "[한국인 리뷰] [Korean Reviewer Pattern]  \n분위기가 좋고 파스타가 정말 맛있어요. 화장실은 지하에 남녀공용이지만 사용하기 불편하지 않아요. 음료수와 잘 어울리는 안주가 좋지만, 정식 음식은 가격이 비싸고 맛도 별로고 양도 적어요. 멋진 인테리어와 푸실리파스타가 정말 한국인 입맛에 딱 맞아요! 로즈마리클럽은 훌륭하지만 조금 짭니다. 대체적으로 다 맛있어요. 특별한 맛은 아니지만 딱히 걸리는 건 없어요. 한 가지 아쉬웠던 건 야외 테이블에서 먹었는데 좀 추웠어요. 과하지 않은 가격에 멋진 인테리어~ 무엇보다 맛이 훌륭했어요^^ 맛은 보통 한국분들이라면 면을 오버쿡해달라고 하세요.\n\n[Non-Korean Reviewer Pattern]  \nThe food is generally praised for its freshness and flavor, particularly the pasta dishes, though some found them overly salty. Service is often described as attentive, but experiences vary, with some noting slow service during busy times. The ambiance is cozy and lively, though noise levels can be high. Prices are seen as high for the portion sizes, leading to mixed feelings about value."
+    },
+    {
+      "place_id": "ChIJ_RUJvZZZwokRNUEv3K4nSik",
+      "name": "OLIO E PIÙ",
+      "rating": 4.7,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.7570507297858677,
+      "korean_pattern": "[한국인 리뷰] Korean Reviewer Pattern  \n한국 리뷰어들은 카르보나라를 꼭 먹어봐야 할 메뉴로 자주 추천해. 그 맛과 식감이 정말 풍부하다고 강조해. 친절한 서비스도 많은 사람들이 좋아하는데, 가브리엘과 마리아 같은 서버들이 특히 인기가 많아. 하지만 몇몇 리뷰어들은 파스타가 너무 짜다고 언급하기도 해서, 개인 취향에 따라 다를 수 있어. 분위기는 대체로 쾌적하다고 하고, 야외 좌석이 있다는 점도 장점이야. 다만, 식당이 붐비는 경우가 있어서 전체적인 경험에 영향을 줄 수 있다는 언급도 있어.\n\n[Non-Korean Reviewer Pattern]  \nNon-Korean reviewers express a mix of opinions about the food, with some praising the homemade pasta and others finding certain dishes underwhelming. Service is often highlighted as a strong point, with specific staff members receiving accolades for their attentiveness. The atmosphere is described as lively and inviting, although some noted the close seating arrangement. Price points are seen as high, with varying opinions on whether the quality justifies the cost."
+    },
+    {
+      "place_id": "ChIJfcwK4I9ZwokRB91xJVHrA4s",
+      "name": "Nonna Dora's 2nd Avenue",
+      "rating": 4.4,
+      "generated_tags": [
+        "서비스 좋음",
+        "맛 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.755392842389898,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJD2aQK95ZwokRtipR7To1S84",
+      "name": "Water & Wheat Upper East",
+      "rating": 4.7,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.750077090419995,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJx1MYBV_3wokRjeYHCXgKrJ8",
+      "name": "314 - pizza,pasta&cocktailbar",
+      "rating": 4.7,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.6958318284346205,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJI43xgLlYwokR9H-LXHs36gc",
+      "name": "Botte UES",
+      "rating": 4.4,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음"
+      ],
+      "score": 2.692747127380523,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJVVVq2KHKw4kRtDExWgrsuO8",
+      "name": "Deluca's Italian Restaurant",
+      "rating": 4.5,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.6845328742172727,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJKzk6b4JZwokRJFfnxFnxV4Q",
+      "name": "Il Posto Accanto",
+      "rating": 4.6,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.653802087048591,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJZdSBiO9YwokRWADMuEN-b64",
+      "name": "Piccola Cucina Uptown",
+      "rating": 4.6,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.645403334469538,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJVS2qI1VYwokRFo18YsKvHYM",
+      "name": "Tony's Di Napoli",
+      "rating": 4.6,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.6414992519955396,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJ94xVbhhawokRaDRb_Y6O1sA",
+      "name": "Da Claudio NYC Ristorante",
+      "rating": 4.5,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.6377536656475407,
+      "korean_pattern": null
+    },
+    {
+      "place_id": "ChIJxXmxz0H2wokRwYJIJ7aBB3s",
+      "name": "Pisticci",
+      "rating": 4.5,
+      "generated_tags": [
+        "맛 좋음",
+        "서비스 좋음",
+        "분위기 좋음"
+      ],
+      "score": 2.635685375946929,
+      "korean_pattern": null
+    }
+  ]
+}

@@ -4,14 +4,18 @@ import { RestaurantList } from '@/features/restaurant/components/RestaurantList'
 import { useChatStore } from '@/shared/store/chatStore';
 import { useProfileStore } from '@/shared/store/profileStore';
 import { useAuthStore } from '@/shared/store/authStore';
-import { useMemo, useState, useEffect } from 'react';
-import { Menu } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 export default function HomePage() {
   const router = useRouter();
   const { category } = router.query;
-  const { currentQuery, recommendedRestaurantIds } = useChatStore();
+  const { 
+    currentQuery, 
+    restaurantsWithCoords,
+    isLoadingCoords,
+  } = useChatStore();
   const { hasSetProfile } = useProfileStore();
   const { userId, fetchUserInfo } = useAuthStore();
   const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
@@ -51,14 +55,6 @@ export default function HomePage() {
     }
   }, [category, router]);
 
-  // 추천된 레스토랑 목록 (API 응답 기반)
-  // 검색 결과가 없으면 빈 배열 반환
-  const filteredRestaurants = useMemo(() => {
-    // TODO: API 연동 후 실제 레스토랑 데이터로 변환 필요
-    // 현재는 빈 배열 반환 (데모 데이터 제거)
-    return [];
-  }, [currentQuery, recommendedRestaurantIds]);
-
   return (
     <div className="h-screen flex overflow-hidden bg-[#F3F4F6]">
       {/* 데스크탑: 좌측 챗봇 */}
@@ -89,7 +85,7 @@ export default function HomePage() {
         {/* 지도 영역 */}
         <div className="flex-1 min-h-[400px] relative bg-white">
           {/* 지도는 항상 렌더링 */}
-          <GoogleMapView restaurants={filteredRestaurants} />
+          <GoogleMapView restaurants={restaurantsWithCoords} />
           
           {/* 검색어가 없을 때 안내 문구를 지도 위에 표시 */}
           {!currentQuery && (
@@ -99,12 +95,22 @@ export default function HomePage() {
               </p>
             </div>
           )}
+
+          {/* 좌표 로딩 중 표시 */}
+          {isLoadingCoords && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-white/95 px-6 py-3 rounded-full shadow-lg border border-gray-200 backdrop-blur-sm pointer-events-none flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-[#5B8DC8]" />
+              <p className="text-sm font-medium text-gray-600">
+                지도에 레스토랑을 표시하는 중...
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 하단: 카드 리스트 */}
-        {filteredRestaurants.length > 0 && (
+        {restaurantsWithCoords.length > 0 && (
           <div className="h-[220px] shrink-0 bg-white border-t border-[#E5E7EB]">
-            <RestaurantList restaurants={filteredRestaurants} />
+            <RestaurantList restaurants={restaurantsWithCoords} />
           </div>
         )}
       </main>

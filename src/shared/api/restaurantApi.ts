@@ -1,15 +1,14 @@
 import { apiClient } from './client';
-import { SAMPLE_RESTAURANT_DETAIL, SAMPLE_RECOMMENDED_RESTAURANTS } from '@/shared/mock/restaurantDetail';
 
 // 레스토랑 상세 정보 응답 타입
 export interface RestaurantDetail {
   place_id: string;
   name: string;
-  grid: string;
+  grid: string | null;
   address: string;
-  rating: number;
-  user_ratings_total: number;
-  primaryType: string;
+  rating: number | null;
+  user_ratings_total: number | null;
+  primaryType: string | null;
   district: string;
   generated_tags: string[];
 }
@@ -22,28 +21,10 @@ export interface RecommendedRestaurant extends RestaurantDetail {
 /**
  * 레스토랑 상세 정보 조회
  * GET /restaurants/{place_id}
- * 
- * 샘플 데이터 모드: API 서버 없이 테스트 가능
  */
 export const getRestaurantDetail = async (
   placeId: string
 ): Promise<RestaurantDetail> => {
-  // 샘플 데이터 모드 (API 서버 없을 때)
-  const useSampleData = true; // 실제 API 사용 시 false로 변경
-  
-  if (useSampleData) {
-    // 샘플 데이터에서 찾기
-    const sampleData = SAMPLE_RESTAURANT_DETAIL[placeId as keyof typeof SAMPLE_RESTAURANT_DETAIL];
-    if (sampleData) {
-      // API 응답 시뮬레이션 (약간의 지연)
-      await new Promise(resolve => setTimeout(resolve, 300));
-      return sampleData;
-    }
-    console.error('Available sample place_ids:', Object.keys(SAMPLE_RESTAURANT_DETAIL));
-    throw new Error(`Restaurant not found in sample data. Try one of: ${Object.keys(SAMPLE_RESTAURANT_DETAIL).join(', ')}`);
-  }
-
-  // 실제 API 호출
   const response = await apiClient.get<RestaurantDetail>(
     `/restaurants/${placeId}`
   );
@@ -51,29 +32,34 @@ export const getRestaurantDetail = async (
 };
 
 /**
+ * 여러 레스토랑 상세 정보 일괄 조회
+ * 각 place_id에 대해 병렬로 API 호출
+ * 
+ * @param placeIds - 조회할 place_id 배열
+ * @returns 성공한 레스토랑 상세 정보 배열 (실패한 것은 제외)
+ */
+export const getRestaurantDetails = async (
+  placeIds: string[]
+): Promise<RestaurantDetail[]> => {
+  const results = await Promise.allSettled(
+    placeIds.map(placeId => getRestaurantDetail(placeId))
+  );
+  
+  // 성공한 결과만 필터링
+  return results
+    .filter((result): result is PromiseFulfilledResult<RestaurantDetail> => 
+      result.status === 'fulfilled'
+    )
+    .map(result => result.value);
+};
+
+/**
  * 비슷한 레스토랑 추천
  * GET /restaurants/{place_id}/recommend
- * 
- * 샘플 데이터 모드: API 서버 없이 테스트 가능
  */
 export const getRecommendedRestaurants = async (
   placeId: string
 ): Promise<RecommendedRestaurant[]> => {
-  // 샘플 데이터 모드 (API 서버 없을 때)
-  const useSampleData = true; // 실제 API 사용 시 false로 변경
-  
-  if (useSampleData) {
-    // 샘플 데이터에서 찾기
-    const sampleData = SAMPLE_RECOMMENDED_RESTAURANTS[placeId as keyof typeof SAMPLE_RECOMMENDED_RESTAURANTS];
-    if (sampleData) {
-      // API 응답 시뮬레이션 (약간의 지연)
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return sampleData;
-    }
-    return []; // 추천 데이터 없으면 빈 배열
-  }
-
-  // 실제 API 호출
   const response = await apiClient.get<RecommendedRestaurant[]>(
     `/restaurants/${placeId}/recommend`
   );

@@ -39,37 +39,34 @@ export function RestaurantCard({ restaurant }: Props) {
       onMouseEnter={() => setSelectedRestaurant(restaurant.place_id)}
       aria-label={`${restaurant.name} 상세 정보 보기`}
       className={cn(
-        'w-[300px] bg-white rounded-lg border border-gray-200 transition-all hover:shadow-lg hover:scale-[1.02] hover:border-blue-500 cursor-pointer',
+        'w-[240px] h-[140px] bg-white px-3 py-3 rounded-lg border border-gray-200 transition-all hover:shadow-lg hover:border-blue-500 cursor-pointer flex flex-col overflow-hidden',
         isSelected && 'border-blue-500 shadow-md ring-2 ring-blue-100'
       )}
     >
       {/* 헤더 영역 */}
-      <div className="p-4 border-b border-gray-100">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-base text-gray-900 leading-tight flex-1 pr-2">
+      <div className="p-2.5 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-start justify-between mb-1">
+          <h3 className="font-bold text-xs text-gray-900 leading-tight flex-1 pr-2 line-clamp-2">
             {restaurant.name}
           </h3>
           {isSelected && (
-            <div className="w-2 h-2 bg-blue-500 rounded-full shadow-lg flex-shrink-0 mt-1" />
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-lg flex-shrink-0 mt-1" />
           )}
         </div>
 
         {/* 평점 */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="font-medium text-sm text-gray-900">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="flex items-center gap-0.5">
+            <Star className="w-3 h-3 text-yellow-400 fill-current" />
+            <span className="font-medium text-xs text-gray-900">
               {restaurant.rating ?? 'N/A'}
             </span>
           </div>
           {restaurant.user_ratings_total && (
-            <span className="text-xs text-gray-500">
-              ({restaurant.user_ratings_total.toLocaleString()}개 리뷰)
-            </span>
-          )}
-          {restaurant.score && (
-            <span className="text-xs text-blue-600 font-medium ml-auto">
-              매칭 {(restaurant.score * 100 / 5).toFixed(0)}%
+            <span className="text-[10px] text-gray-500">
+              ({restaurant.user_ratings_total > 999 
+                ? `${(restaurant.user_ratings_total / 1000).toFixed(1)}k` 
+                : restaurant.user_ratings_total})
             </span>
           )}
         </div>
@@ -77,10 +74,10 @@ export function RestaurantCard({ restaurant }: Props) {
         {/* 태그 */}
         {restaurant.generated_tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {restaurant.generated_tags.map((tag, index) => (
+            {restaurant.generated_tags.slice(0, 2).map((tag, index) => (
               <span
                 key={index}
-                className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-medium rounded-full"
               >
                 {tag}
               </span>
@@ -90,26 +87,23 @@ export function RestaurantCard({ restaurant }: Props) {
       </div>
 
       {/* 상세 정보 영역 */}
-      <div className="p-4">
+      <div className="p-2.5 flex-1 overflow-y-auto flex flex-col gap-1.5">
         {/* 주소 */}
-        <div className="flex items-start gap-1.5 mb-3">
-          <MapPin className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-gray-600 line-clamp-2">
+        <div className="flex items-start gap-1">
+          <MapPin className="w-2.5 h-2.5 text-gray-400 mt-0.5 flex-shrink-0" />
+          <p className="text-[10px] text-gray-600 line-clamp-2 leading-relaxed">
             {restaurant.address}
           </p>
         </div>
 
         {/* 한국인 패턴 요약 */}
-        {restaurant.korean_pattern && (
-          <div className="bg-gray-50 rounded-md p-2.5">
-            <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed">
-              {restaurant.korean_pattern.length > 150 
-                ? restaurant.korean_pattern.slice(0, 150) + '...'
-                : restaurant.korean_pattern
-              }
+        {/* {restaurant.korean_pattern && (
+          <div className="bg-gray-50 rounded p-1.5 flex-1 overflow-y-auto">
+            <p className="text-[10px] text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {restaurant.korean_pattern}
             </p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

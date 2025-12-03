@@ -73,7 +73,7 @@ export default function HomePage() {
       )}
 
       {/* 우측: 지도 + 결과 */}
-      <main className="flex-1 flex flex-col min-w-0 relative overflow-y-auto">
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* 모바일: 챗봇 열기 버튼 */}
         <button
           onClick={() => setIsMobileChatOpen(true)}
@@ -82,8 +82,8 @@ export default function HomePage() {
           <Menu className="w-6 h-6" />
         </button>
 
-        {/* 지도 영역 */}
-        <div className="flex-1 min-h-[400px] relative bg-white">
+        {/* 지도 영역 - 고정 높이 */}
+        <div className="flex-1 relative bg-white shrink-0 overflow-hidden">
           {/* 지도는 항상 렌더링 */}
           <GoogleMapView restaurants={restaurantsWithCoords} />
           
@@ -105,11 +105,12 @@ export default function HomePage() {
               </p>
             </div>
           )}
+
         </div>
 
-        {/* 하단: 카드 리스트 */}
+        {/* 하단: 카드 리스트 - 세로 스크롤 */}
         {restaurantsWithCoords.length > 0 && (
-          <div className="h-[220px] shrink-0 bg-white border-t border-[#E5E7EB]">
+          <div className="h-auto max-h-[240px] shrink-0 bg-white border-t border-[#E5E7EB] overflow-y-auto">
             <RestaurantList restaurants={restaurantsWithCoords} />
           </div>
         )}

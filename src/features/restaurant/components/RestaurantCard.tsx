@@ -97,13 +97,13 @@ export function RestaurantCard({ restaurant }: Props) {
         </div>
 
         {/* 한국인 패턴 요약 */}
-        {/* {restaurant.korean_pattern && (
-          <div className="bg-gray-50 rounded p-1.5 flex-1 overflow-y-auto">
-            <p className="text-[10px] text-gray-700 leading-relaxed whitespace-pre-wrap">
+        {restaurant.korean_pattern && (
+          <div className="bg-gray-50 rounded p-1.5 py-3 flex-1 overflow-y-auto">
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
               {restaurant.korean_pattern}
             </p>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

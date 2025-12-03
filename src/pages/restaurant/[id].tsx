@@ -183,17 +183,7 @@ export default function RestaurantDetailPage() {
               </div>
             )}
 
-            {/* 한국인 패턴 요약 */}
-            {restaurant.korean_pattern && (
-              <div className="mt-6">
-                <p className="text-sm text-gray-500 mb-2">한국인 방문 패턴</p>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {restaurant.korean_pattern}
-                  </p>
-                </div>
-              </div>
-            )}
+            
           </div>
         </div>
 

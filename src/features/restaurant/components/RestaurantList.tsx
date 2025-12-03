@@ -18,20 +18,6 @@ export function RestaurantList({ restaurants }: Props) {
     }
   }, [restaurants]);
 
-  // // 선택된 카드로 스크롤
-  // useEffect(() => {
-  //   if (selectedRestaurantId && containerRef.current) {
-  //     const selectedCard = containerRef.current.querySelector(
-  //       `[data-restaurant-id="${selectedRestaurantId}"]`
-  //     );
-  //     selectedCard?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  //   }
-  // }, [selectedRestaurantId]);
-
-  // if (restaurants.length === 0) {
-  //   return null;
-  // }
-
   return (
     <div className="w-full h-full flex flex-col bg-white">
       

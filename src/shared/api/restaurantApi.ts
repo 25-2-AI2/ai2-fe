@@ -11,6 +11,7 @@ export interface RestaurantDetail {
   primaryType: string | null;
   district: string;
   generated_tags: string[];
+  korean_pattern?: string;
 }
 
 // 추천 레스토랑 타입 (match_reason 추가)

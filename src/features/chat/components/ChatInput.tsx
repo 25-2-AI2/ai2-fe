@@ -43,12 +43,12 @@ export function ChatInput() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="식당 이름이나 종류를 검색하세요"
           disabled={isLoading}
-          className="flex-1 px-4 py-2 text-sm border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#5B8DC8] focus:ring-2 focus:ring-[#D9EAFD] disabled:bg-[#F9FAFB] disabled:text-[#BCCCDC] transition-all"
+          className="flex-1 px-4 py-3 text-sm border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#5B8DC8] focus:ring-2 focus:ring-[#D9EAFD] disabled:bg-[#F9FAFB] disabled:text-[#BCCCDC] transition-all"
         />
         <button
           type="submit"
           disabled={!input.trim() || isLoading}
-          className="px-4 py-2 bg-[#5B8DC8] text-white text-sm font-bold rounded-lg hover:bg-[#4A7AB7] hover:shadow-md disabled:bg-[#D9EAFD] disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-3 bg-[#5B8DC8] text-white text-sm font-bold rounded-lg hover:bg-[#4A7AB7] hover:shadow-md disabled:bg-[#D9EAFD] disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1.5"
         >
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
